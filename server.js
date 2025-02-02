@@ -94,31 +94,34 @@ app.get("/callback", async (req, res) => {
 
     const body = await tokenResponse.json();
 
-    if (tokenResponse.ok) {
-      const { access_token, refresh_token } = body;
-
-      console.log({ access_token });
-
-      const userResponse = await fetch("https://api.spotify.com/v1/me", {
-        headers: { Authorization: `Bearer ${access_token}` },
-      });
-
-      const userData = await userResponse.json();
-      console.log(userData);
-
+    if (!tokenResponse.ok) {
+      console.error("Failed to fetch token:", body);
       return res.redirect(
-        front_end_address +
-          "/?" +
-          new URLSearchParams({
-            access_token,
-            refresh_token,
-          }).toString()
+        "/#" + new URLSearchParams({ error: "invalid_token" }).toString()
       );
     }
 
-    res.redirect(
-      "/#" + new URLSearchParams({ error: "invalid_token" }).toString()
-    );
+    if (tokenResponse.ok) {
+      const { access_token, refresh_token } = body;
+
+      console.log({ refresh_token });
+
+      res.cookie("access_token", access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+
+      res.cookie("refresh_token", refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+
+      return res.redirect(front_end_address + "/");
+    }
   } catch (error) {
     console.error("Error fetching token:", error);
     res.redirect(
@@ -129,6 +132,8 @@ app.get("/callback", async (req, res) => {
 
 app.get("/refresh_token", async (req, res) => {
   const refresh_token = req.query.refresh_token;
+
+  res.clearCookie(stateKey);
 
   try {
     const response = await fetch("https://accounts.spotify.com/api/token", {
@@ -149,6 +154,18 @@ app.get("/refresh_token", async (req, res) => {
 
     if (response.ok) {
       res.json({ access_token: body.access_token });
+      res.cookie("access_token", body.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+      res.cookie("refresh_token", body.refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
     } else {
       res.status(400).json({ error: "Invalid refresh token" });
     }

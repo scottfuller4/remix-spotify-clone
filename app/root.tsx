@@ -1,25 +1,45 @@
-import { Links, Meta, Outlet, Scripts, useLoaderData } from "@remix-run/react";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-
 import React from "react";
+import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
+import type { LinksFunction } from "@remix-run/node";
+import { getPlaylists, getUserData, PlaylistData, UserData } from "./data";
+import { json } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import Header from "./components/Header";
+import PlayerBar from "./components/PlayerBar";
+import NavBar from "./components/NavBar";
+import Playlist from "./components/Playlist";
+import invariant from "tiny-invariant";
+import cookie from "cookie";
+
 import appStylesHref from "./app.css?url";
-import { getUserData } from "./data";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: appStylesHref },
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const url = new URL(request.url);
-  const accessToken = url.searchParams.get("access_token");
-  const user = accessToken ? await getUserData(accessToken) : null;
-  return json({ user });
+  const cookieHeader = request.headers.get("Cookie") || "";
+  const cookies = cookie.parse(cookieHeader);
+  const accessToken = cookies.access_token;
+  const refreshToken = cookies.refresh_token;
+
+  if (!accessToken || !refreshToken) {
+    return json({ user: null, playlists: null });
+  }
+
+  const user: UserData = await getUserData(accessToken, refreshToken);
+  console.log({ user });
+  const playlists = await getPlaylists(accessToken, refreshToken);
+  invariant(playlists, "Missing playlists");
+  invariant(user, "Missing user");
+
+  const playlistItems: PlaylistData[] = playlists ? playlists.items : null;
+  return json({ user, playlists: playlistItems });
 };
 
 export default function App() {
-  const { user } = useLoaderData<typeof loader>();
-
+  const { user, playlists } = useLoaderData<typeof loader>();
   return (
     <html>
       <head>
@@ -28,8 +48,17 @@ export default function App() {
       </head>
       <body>
         <div id="app">
-          {user ? (
-            <h1>{user.display_name}</h1>
+          {user && playlists ? (
+            <>
+              <div className="layout">
+                <Header user={user} />
+                <main>
+                  <NavBar playlists={playlists} />
+                  <Outlet />
+                </main>
+              </div>
+              <PlayerBar />
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center h-screen">
               <h1 className="font-bold">Spotify Web Clone</h1>
@@ -54,8 +83,6 @@ export default function App() {
             </div>
           )}
         </div>
-        <Outlet />
-
         <Scripts />
       </body>
     </html>
