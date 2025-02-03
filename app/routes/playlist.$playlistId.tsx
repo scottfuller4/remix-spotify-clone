@@ -22,8 +22,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function PlaylistPage() {
   const { playlist, tracks } = useLoaderData<typeof loader>();
-  // console.log({ playlist });
-  // console.log({ tracks });
 
   return (
     <>{playlist && <Playlist playlist={playlist} tracks={tracks.items} />}</>

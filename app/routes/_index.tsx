@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { getPlaylists, getUserData, PlaylistData, UserData } from "../data";
+import React from "react";
+import { getPlaylists, getPlaylistTracks, PlaylistData } from "../data";
 import { json } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -11,20 +11,27 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get("Cookie") || "";
   const cookies = cookie.parse(cookieHeader);
   const accessToken = cookies.access_token;
+  const refreshToken = cookies.refresh_token;
 
-  if (!accessToken) {
+  if (!accessToken || !refreshToken) {
     return json({ playlists: null });
   }
 
-  const playlists = await getPlaylists(accessToken);
+  const playlists = await getPlaylists(accessToken, refreshToken);
   invariant(playlists, "Missing playlists");
   const playlistItems: PlaylistData[] = playlists ? playlists.items : null;
+  const tracks = await getPlaylistTracks(accessToken, playlistItems[0].id);
+  invariant(tracks, "Missing tracks");
 
-  return json({ playlists: playlistItems });
+  return json({ playlists: playlistItems, tracks });
 };
 
 export default function Index() {
-  const { playlists } = useLoaderData<typeof loader>();
+  const { playlists, tracks } = useLoaderData<typeof loader>();
 
-  return <>{playlists && <Playlist playlist={playlists[0]} tracks={[]} />}</>;
+  return (
+    <>
+      {playlists && <Playlist playlist={playlists[0]} tracks={tracks.items} />}
+    </>
+  );
 }

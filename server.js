@@ -104,8 +104,6 @@ app.get("/callback", async (req, res) => {
     if (tokenResponse.ok) {
       const { access_token, refresh_token } = body;
 
-      console.log({ refresh_token });
-
       res.cookie("access_token", access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -120,7 +118,14 @@ app.get("/callback", async (req, res) => {
         path: "/",
       });
 
-      return res.redirect(front_end_address + "/");
+      return res.redirect(
+        front_end_address +
+          "/?" +
+          querystring.stringify({
+            access_token: access_token,
+            refresh_token: refresh_token,
+          })
+      );
     }
   } catch (error) {
     console.error("Error fetching token:", error);

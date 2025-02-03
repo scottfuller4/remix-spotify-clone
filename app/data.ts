@@ -5,9 +5,9 @@ interface SpotifyImage {
 }
 
 export interface UserData {
-  display_name?: string;
-  images?: SpotifyImage[];
-  id?: string;
+  display_name: string;
+  images: SpotifyImage[];
+  id: string;
 }
 
 export interface PlaylistData {
@@ -36,6 +36,7 @@ export interface TrackData {
     duration_ms: number;
   };
   added_at: string;
+  id: string;
 }
 
 async function refreshAccessToken(refreshToken: string) {
@@ -50,11 +51,6 @@ async function refreshAccessToken(refreshToken: string) {
     console.log({ data });
 
     return data.access_token;
-
-    // if (data.access_token) {
-    //   localStorage.setItem("access_token", data.access_token);
-    //   return data.access_token;
-    // }
   } catch (error) {
     console.error("Error refreshing token:", error);
   }
@@ -69,10 +65,6 @@ export async function getUserData(accessToken: string, refreshToken: string) {
     },
   });
 
-  //   if (!response.ok) {
-  //     throw new Error("Failed to fetch user data");
-  //   }
-  // If access token is expired, refresh and retry
   if (response.status === 401) {
     console.log("Access token expired, refreshing...");
     accessToken = await refreshAccessToken(refreshToken);
