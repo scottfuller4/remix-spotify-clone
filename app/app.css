@@ -124,7 +124,7 @@ a {
 
 /*  Playlist styles */
 .playlist-container {
-  background: linear-gradient(#3bbfce 0%, rgb(0, 0, 0) 100%);
+  background: linear-gradient(#4f5d74, rgb(0, 0, 0) 100%);
 }
 
 .tracks-container {
@@ -143,11 +143,10 @@ a {
 
 .tracks-head {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--color-white);
 }
 
 tr {
-  color: #aeaeae;
+  color: var(--color-white);
 }
 
 td {
@@ -175,4 +174,8 @@ td:last-child {
 /* Nav bar styles */
 .nav-bar {
   background: var(--background-base);
+}
+
+.nav-active span {
+  background-color: #48474770;
 }

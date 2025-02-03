@@ -1,20 +1,16 @@
 import React from "react";
 import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
-import {
-  getPlaylists,
-  getPlaylistTracks,
-  getUserData,
-  PlaylistData,
-  UserData,
-} from "./data";
 import { json } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import Header from "./components/Header";
-import NavBar from "./components/NavBar";
 import invariant from "tiny-invariant";
 import cookie from "cookie";
+
+import { getPlaylists, getUserData, PlaylistData, UserData } from "./data";
+
+import Header from "./components/Header";
+import NavBar from "./components/NavBar";
 import Logo from "./components/svg/Logo";
 
 // @ts-ignore expected import path for remix
@@ -37,9 +33,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   const user: UserData = await getUserData(accessToken);
+  invariant(user, "Missing user");
   const playlists = await getPlaylists(accessToken);
   invariant(playlists, "Missing playlists");
-  invariant(user, "Missing user");
 
   const playlistItems: PlaylistData[] = playlists ? playlists.items : null;
   return json({ user, playlists: playlistItems });

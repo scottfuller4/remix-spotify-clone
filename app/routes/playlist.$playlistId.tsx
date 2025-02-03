@@ -1,9 +1,11 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
 import React from "react";
-import { getPlaylist, getPlaylistTracks, PlaylistData } from "../data";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import cookie from "cookie";
+
+import { getPlaylist, getPlaylistTracks } from "../data";
+
 import Playlist from "../components/Playlist";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {

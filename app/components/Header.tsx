@@ -1,5 +1,7 @@
 import React from "react";
+
 import { UserData } from "../data";
+
 import Logo from "./svg/Logo";
 
 export default function Header({ user }: { user: UserData }) {

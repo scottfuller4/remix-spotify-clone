@@ -115,9 +115,7 @@ app.get("/callback", async (req, res) => {
     }
   } catch (error) {
     console.error("Error fetching token:", error);
-    res.redirect(
-      "/#" + new URLSearchParams({ error: "server_error" }).toString()
-    );
+    res.redirect("/");
   }
 });
 

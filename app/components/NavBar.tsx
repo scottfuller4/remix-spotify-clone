@@ -1,6 +1,8 @@
 import React from "react";
-import { PlaylistData, UserData } from "../data";
-import { Link } from "@remix-run/react";
+import { Link, NavLink } from "@remix-run/react";
+
+import { PlaylistData } from "../data";
+
 import Folder from "./svg/Folder";
 
 export default function NavBar({ playlists }: { playlists: PlaylistData[] }) {
@@ -14,8 +16,13 @@ export default function NavBar({ playlists }: { playlists: PlaylistData[] }) {
         <ul className="overflow-scroll">
           {playlists.map((playlist) => (
             <li className="p-2" key={playlist.id}>
-              <Link to={`/playlist/${playlist.id}`}>
-                <span className="flex">
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? "nav-active rounded-sm" : ""
+                }
+                to={`/playlist/${playlist.id}`}
+              >
+                <span className="flex rounded-sm">
                   <img
                     src={playlist.images[0].url}
                     className="rounded-sm w-12"
@@ -25,7 +32,7 @@ export default function NavBar({ playlists }: { playlists: PlaylistData[] }) {
                     {playlist.name}
                   </p>
                 </span>
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>
