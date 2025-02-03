@@ -31,14 +31,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get("Cookie") || "";
   const cookies = cookie.parse(cookieHeader);
   const accessToken = cookies.access_token;
-  const refreshToken = cookies.refresh_token;
 
-  if (!accessToken || !refreshToken) {
+  if (!accessToken) {
     return json({ user: null, playlists: null });
   }
 
-  const user: UserData = await getUserData(accessToken, refreshToken);
-  const playlists = await getPlaylists(accessToken, refreshToken);
+  const user: UserData = await getUserData(accessToken);
+  const playlists = await getPlaylists(accessToken);
   invariant(playlists, "Missing playlists");
   invariant(user, "Missing user");
 
@@ -58,9 +57,9 @@ export default function App() {
         <div id="app">
           {user && playlists ? (
             <>
-              <div className="flex flex-col justify-between">
+              <div className="flex flex-col justify-between max-h-screen h-screen">
                 <Header user={user} />
-                <main>
+                <main className="flex flex-1 mb-4 overflow-hidden">
                   <NavBar playlists={playlists} />
                   <Outlet />
                 </main>
@@ -68,7 +67,7 @@ export default function App() {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center h-screen">
-              <h1 className="font-bold">Spotify Web Clone</h1>
+              <h1 className="font-bold text-3xl mb-4">Spotify Web Clone</h1>
               <Logo />
               <button className="cursor-pointer btn-primary">
                 <a href="http://localhost:8888/login">Log in to Spotify</a>

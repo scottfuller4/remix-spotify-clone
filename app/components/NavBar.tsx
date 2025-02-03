@@ -6,7 +6,7 @@ import Folder from "./svg/Folder";
 export default function NavBar({ playlists }: { playlists: PlaylistData[] }) {
   return (
     <>
-      <div className="nav-bar flex flex-col items-start flex-none rounded-lg px-2 pt-4 mx-4 max-h-full">
+      <div className="nav-bar flex-col items-start flex-none rounded-lg px-2 pt-4 ml-4 max-h-full hidden lg:flex">
         <div className="flex items-end ml-2 mb-2">
           <Folder />
           <p className="text-base font-bold pl-2">Your Playlists</p>
@@ -19,8 +19,11 @@ export default function NavBar({ playlists }: { playlists: PlaylistData[] }) {
                   <img
                     src={playlist.images[0].url}
                     className="rounded-sm w-12"
+                    alt={`${playlist.name} album cover`}
                   />
-                  <p className="pl-4 text-base font-normal">{playlist.name}</p>
+                  <p className="pl-4 pt-1 text-base font-normal">
+                    {playlist.name}
+                  </p>
                 </span>
               </Link>
             </li>

@@ -111,21 +111,7 @@ app.get("/callback", async (req, res) => {
         path: "/",
       });
 
-      res.cookie("refresh_token", refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      });
-
-      return res.redirect(
-        front_end_address +
-          "/?" +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token,
-          })
-      );
+      return res.redirect(front_end_address + "/");
     }
   } catch (error) {
     console.error("Error fetching token:", error);
@@ -160,12 +146,6 @@ app.get("/refresh_token", async (req, res) => {
     if (response.ok) {
       res.json({ access_token: body.access_token });
       res.cookie("access_token", body.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      });
-      res.cookie("refresh_token", body.refresh_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",

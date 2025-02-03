@@ -12,9 +12,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/react-fontawesome": "^0.2.2",
     "@remix-run/express": "^2.15.3",
     "@remix-run/node": "^2.15.3",
     "@remix-run/react": "^2.15.3",
@@ -28,15 +25,12 @@
     "node-fetch": "^3.3.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "styled-components": "^6.1.14",
     "tiny-invariant": "^1.3.3"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.3",
     "@types/css-modules": "^1.0.5",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.5.1",
-    "sass-embedded": "^1.83.4",
     "tailwindcss": "^4.0.3",
     "vite": "^5.4.14"
   },

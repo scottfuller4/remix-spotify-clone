@@ -11,15 +11,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get("Cookie") || "";
   const cookies = cookie.parse(cookieHeader);
   const accessToken = cookies.access_token;
-  const refreshToken = cookies.refresh_token;
 
-  if (!accessToken || !refreshToken) {
-    return json({ playlists: null });
+  if (!accessToken) {
+    return json({ playlists: null, tracks: null });
   }
 
-  const playlists = await getPlaylists(accessToken, refreshToken);
+  const playlists = await getPlaylists(accessToken);
   invariant(playlists, "Missing playlists");
   const playlistItems: PlaylistData[] = playlists ? playlists.items : null;
+
   const tracks = await getPlaylistTracks(accessToken, playlistItems[0].id);
   invariant(tracks, "Missing tracks");
 
